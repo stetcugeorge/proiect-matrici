@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MusicMatrix — Proiect Matrici</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0f0e0c;
+    --cream: #f5f0e8;
+    --gold: #c9a84c;
+    --gold-light: #e8d5a0;
+    --gold-dark: #8a6e28;
+    --bg: #1a1714;
+    --card: #231f1b;
+    --card2: #2d2822;
+    --border: rgba(201,168,76,0.25);
+    --muted: #8a8070;
+    --accent: #e05c3a;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--cream);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 3rem;
+    background: rgba(26,23,20,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 900;
+    color: var(--gold);
+    letter-spacing: -0.02em;
+  }
+  .nav-logo span { color: var(--cream); }
+  nav ul { list-style: none; display: flex; gap: 2rem; }
+  nav ul li a {
+    text-decoration: none; color: var(--muted);
+    font-size: 0.85rem; font-weight: 500; letter-spacing: 0.06em;
+    text-transform: uppercase; transition: color 0.2s;
+  }
+  nav ul li a:hover { color: var(--gold); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 8rem 3rem 4rem;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 70% at 80% 50%, rgba(201,168,76,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    display: inline-block;
+    font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gold); border: 0.5px solid var(--gold);
+    padding: 0.3rem 0.8rem; border-radius: 2px;
+    margin-bottom: 2rem;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 900; line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 2rem;
+  }
+  .hero h1 em { color: var(--gold); font-style: normal; }
+  .hero-desc {
+    max-width: 520px;
+    color: var(--muted); font-size: 1.05rem; line-height: 1.7;
+    margin-bottom: 3rem;
+  }
+  .hero-meta {
+    display: flex; gap: 3rem;
+    border-top: 0.5px solid var(--border); padding-top: 2rem;
+  }
+  .hero-meta-item { display: flex; flex-direction: column; gap: 0.2rem; }
+  .hero-meta-item .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); }
+  .hero-meta-item .value { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--gold); }
+  .hero-big-num {
+    position: absolute; right: -2rem; top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(8rem, 20vw, 22rem);
+    font-weight: 900; color: rgba(201,168,76,0.04);
+    line-height: 1; user-select: none; pointer-events: none;
+    letter-spacing: -0.05em;
+  }
+
+  /* SECTIONS */
+  section { padding: 6rem 3rem; }
+  section + section { border-top: 0.5px solid var(--border); }
+
+  .section-label {
+    font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.8rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700; line-height: 1.15;
+    margin-bottom: 1.5rem; letter-spacing: -0.02em;
+  }
+  .section-title em { color: var(--gold); font-style: normal; }
+
+  /* ENUNT */
+  .enunt-box {
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: 4px;
+    padding: 2rem 2.5rem;
+    max-width: 780px;
+    line-height: 1.8; font-size: 0.95rem; color: #ccc4b0;
+  }
+  .enunt-box strong { color: var(--gold); font-weight: 500; }
+
+  /* CERINTE GRID */
+  .cerinte-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem; margin-top: 2.5rem;
+  }
+  .cerinta-card {
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+    padding: 1.5rem;
+    position: relative; overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .cerinta-card:hover { border-color: var(--gold); }
+  .cerinta-card::before {
+    content: attr(data-num);
+    position: absolute; right: 1rem; bottom: -0.5rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem; font-weight: 900;
+    color: rgba(201,168,76,0.06); line-height: 1;
+  }
+  .cerinta-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(201,168,76,0.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; margin-bottom: 1rem;
+  }
+  .cerinta-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem; margin-bottom: 0.5rem;
+    color: var(--cream);
+  }
+  .cerinta-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+  /* MATRICE VIZUALA */
+  .matrix-section { background: var(--card2); }
+  .matrix-visual {
+    display: flex; flex-direction: column;
+    gap: 0.4rem; margin-top: 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    max-width: 600px;
+  }
+  .matrix-row { display: flex; gap: 0.4rem; }
+  .matrix-cell {
+    width: 64px; height: 48px;
+    display: flex; align-items: center; justify-content: center;
+    border: 0.5px solid var(--border);
+    border-radius: 3px;
+    background: var(--card);
+    color: var(--cream);
+    transition: all 0.2s;
+    cursor: default;
+  }
+  .matrix-cell:hover {
+    background: rgba(201,168,76,0.15);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  .matrix-cell.header {
+    background: transparent; border: none;
+    color: var(--muted); font-size: 0.75rem; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .matrix-cell.highlight { background: rgba(201,168,76,0.18); border-color: var(--gold); color: var(--gold-light); }
+  .matrix-caption {
+    margin-top: 1.5rem; font-size: 0.8rem; color: var(--muted);
+    display: flex; gap: 1.5rem; flex-wrap: wrap;
+  }
+  .matrix-caption span { display: flex; align-items: center; gap: 0.5rem; }
+  .matrix-caption .dot {
+    width: 10px; height: 10px; border-radius: 2px;
+    background: rgba(201,168,76,0.18); border: 0.5px solid var(--gold);
+    flex-shrink: 0;
+  }
+  .matrix-labels {
+    display: flex; gap: 0.4rem; margin-bottom: 0.4rem;
+    font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+  .matrix-label-row {
+    display: flex; flex-direction: column; gap: 0.4rem;
+    font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted);
+    align-items: flex-end; padding-right: 0.4rem;
+    justify-content: center;
+  }
+  .matrix-wrapper { display: flex; gap: 0; align-items: flex-start; }
+  .matrix-label-col {
+    display: flex; gap: 0.4rem; flex-direction: column;
+    justify-content: center;
+  }
+  .lbl { width: 64px; height: 48px; display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); }
+
+  /* COD C++ */
+  .code-section {}
+  .code-block {
+    background: #0d0b09;
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+    padding: 2rem;
+    overflow-x: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.8;
+    margin-top: 2rem;
+    max-height: 520px;
+    overflow-y: auto;
+  }
+  .code-block::-webkit-scrollbar { width: 4px; height: 4px; }
+  .code-block::-webkit-scrollbar-track { background: transparent; }
+  .code-block::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .kw { color: #c792ea; }
+  .fn { color: #82aaff; }
+  .str { color: #c3e88d; }
+  .num { color: #f78c6c; }
+  .cmt { color: #546e7a; font-style: italic; }
+  .tp { color: #ffcb6b; }
+  .op { color: var(--gold); }
+
+  .code-header {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #0d0b09; border: 0.5px solid var(--border);
+    border-bottom: none; border-radius: 6px 6px 0 0;
+    padding: 0.75rem 1.5rem;
+    margin-top: 2rem;
+  }
+  .code-header .filename {
+    font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--muted);
+  }
+  .code-header .dots { display: flex; gap: 6px; }
+  .code-header .dots span {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .code-header .dots span:nth-child(1) { background: #ff5f57; }
+  .code-header .dots span:nth-child(2) { background: #febc2e; }
+  .code-header .dots span:nth-child(3) { background: #28c840; }
+  .code-block-connected {
+    margin-top: 0 !important;
+    border-radius: 0 0 6px 6px;
+  }
+
+  .share-btn {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    margin-top: 1.5rem;
+    background: var(--gold); color: var(--ink);
+    padding: 0.75rem 1.5rem; border-radius: 4px;
+    text-decoration: none; font-weight: 500; font-size: 0.85rem;
+    transition: opacity 0.2s;
+  }
+  .share-btn:hover { opacity: 0.85; }
+
+  /* DATE INTRARE / IESIRE */
+  .io-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+  @media (max-width: 640px) { .io-grid { grid-template-columns: 1fr; } }
+  .io-card {
+    background: var(--card); border: 0.5px solid var(--border); border-radius: 6px; padding: 1.5rem;
+  }
+  .io-card h4 {
+    font-family: 'Playfair Display', serif; font-size: 0.95rem;
+    margin-bottom: 1rem; color: var(--gold);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .io-card pre {
+    font-family: 'DM Mono', monospace; font-size: 0.78rem; color: #aaa094;
+    line-height: 1.8; white-space: pre-wrap;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 0.5px solid var(--border);
+    padding: 3rem;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  footer .f-left { display: flex; flex-direction: column; gap: 0.3rem; }
+  footer .f-logo {
+    font-family: 'Playfair Display', serif; font-size: 1.1rem;
+    font-weight: 700; color: var(--gold);
+  }
+  footer p { font-size: 0.78rem; color: var(--muted); }
+
+  /* TABS */
+  .tab-nav { display: flex; gap: 0; border-bottom: 0.5px solid var(--border); margin-top: 2rem; }
+  .tab-btn {
+    background: none; border: none; padding: 0.75rem 1.5rem;
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500;
+    color: var(--muted); cursor: pointer; letter-spacing: 0.04em;
+    border-bottom: 2px solid transparent; margin-bottom: -0.5px;
+    transition: all 0.2s;
+  }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .tab-content { display: none; padding-top: 1.5rem; }
+  .tab-content.active { display: block; }
+
+  /* SCROLL REVEAL */
+  .reveal { opacity: 0; transform: translateY(24px); transition: all 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Music<span>Matrix</span></div>
+  <ul>
+    <li><a href="#enunt">Enunț</a></li>
+    <li><a href="#cerinte">Cerințe</a></li>
+    <li><a href="#matrice">Matrice</a></li>
+    <li><a href="#cod">Cod C++</a></li>
+    <li><a href="#date">Date</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-big-num">♩</div>
+  <div class="hero-tag">Proiect Informatică · Matrici · Clasa a X-a</div>
+  <h1>Music<br><em>Matrix</em></h1>
+  <p class="hero-desc">
+    Un program C++ care gestionează date despre trupe și albume muzicale folosind
+    matrice bidimensionale, cu patru cerințe statistice implementate complet.
+  </p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <span class="label">Domeniu</span>
+      <span class="value">Muzică</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="label">Structură date</span>
+      <span class="value">Matrice 2D</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="label">Cerințe</span>
+      <span class="value">4 implementate</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="label">Limbaj</span>
+      <span class="value">C++ · fișiere .txt</span>
+    </div>
+  </div>
+</section>
+
+<!-- ENUNT -->
+<section id="enunt">
+  <div class="section-label">Problema</div>
+  <h2 class="section-title reveal">Enunțul <em>problemei</em></h2>
+  <div class="enunt-box reveal">
+    <p>
+      Se consideră o matrice cu <strong>n linii</strong> și <strong>m coloane</strong>, unde fiecare 
+      <strong>linie reprezintă o trupă muzicală</strong>, iar fiecare 
+      <strong>coloană reprezintă un album al trupei</strong>. 
+      Elementul <em>a[i][j]</em> reprezintă <strong>numărul de melodii</strong> de pe albumul <em>j</em> al trupei <em>i</em>.
+    </p>
+    <br>
+    <p>Programul citește datele dintr-un fișier text (<strong>muzica.in</strong>) și scrie rezultatele într-un fișier de ieșire (<strong>muzica.out</strong>), rezolvând urmotoarele cerințe:</p>
+    <br>
+    <ol style="padding-left: 1.5rem; display: flex; flex-direction: column; gap: 0.4rem;">
+      <li><strong>C1.</strong> Numărul de albume care conțin mai mult de <em>k</em> melodii</li>
+      <li><strong>C2.</strong> Trupa cu cel mai mare număr total de melodii (maximul pe linii)</li>
+      <li><strong>C3.</strong> Media aritmetică a melodiilor pentru fiecare trupă</li>
+      <li><strong>C4.</strong> Albumele cu număr impar de melodii (care sunt acestea)</li>
+    </ol>
+  </div>
+</section>
+
+<!-- CERINTE -->
+<section id="cerinte">
+  <div class="section-label">Implementare</div>
+  <h2 class="section-title reveal">Cele <em>4 cerințe</em></h2>
+  <div class="cerinte-grid">
+    <div class="cerinta-card reveal" data-num="1">
+      <div class="cerinta-icon">🔢</div>
+      <h3>Numărare condiționată</h3>
+      <p>Se numără toate elementele din matrice care sunt strict mai mari decât un prag <em>k</em> introdus de utilizator. Parcurgere completă cu contor.</p>
+    </div>
+    <div class="cerinta-card reveal" data-num="2">
+      <div class="cerinta-icon">🏆</div>
+      <h3>Maxim pe linii</h3>
+      <p>Se calculează suma melodiilor pentru fiecare trupă (sumă pe linie), apoi se identifică trupa cu suma maximă și se afișează indexul acesteia.</p>
+    </div>
+    <div class="cerinta-card reveal" data-num="3">
+      <div class="cerinta-icon">📊</div>
+      <h3>Medie aritmetică</h3>
+      <p>Pentru fiecare trupă (linie), se calculează media aritmetică a numărului de melodii de pe toate albumele sale. Rezultat cu două zecimale.</p>
+    </div>
+    <div class="cerinta-card reveal" data-num="4">
+      <div class="cerinta-icon">🎵</div>
+      <h3>Filtrare după paritate</h3>
+      <p>Se identifică și se afișează pozițiile <em>(i, j)</em> ale tuturor albumelor cu număr impar de melodii, împreună cu valoarea respectivă.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MATRICE VIZUALA -->
+<section id="matrice" class="matrix-section">
+  <div class="section-label">Structura datelor</div>
+  <h2 class="section-title reveal">Matricea <em>muzicală</em></h2>
+  <p style="color: var(--muted); font-size: 0.9rem; max-width: 500px; line-height: 1.7; margin-bottom: 0.5rem;" class="reveal">
+    Exemplu vizual: 5 trupe × 4 albume. Fiecare celulă = număr de melodii. 
+    Celulele aurii au număr impar de melodii (cerința 4).
+  </p>
+
+  <div class="matrix-wrapper reveal" style="margin-top: 2rem;">
+    <div style="display: flex; flex-direction: column;">
+      <div style="height: 36px;"></div>
+      <div class="matrix-label-col">
+        <div class="lbl">Trupa 1</div>
+        <div class="lbl">Trupa 2</div>
+        <div class="lbl">Trupa 3</div>
+        <div class="lbl">Trupa 4</div>
+        <div class="lbl">Trupa 5</div>
+      </div>
+    </div>
+    <div>
+      <div class="matrix-labels" style="padding-left: 0.4rem;">
+        <div style="width: 64px; text-align:center; font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted);">Album 1</div>
+        <div style="width: 64px; text-align:center; font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted);">Album 2</div>
+        <div style="width: 64px; text-align:center; font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted);">Album 3</div>
+        <div style="width: 64px; text-align:center; font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted);">Album 4</div>
+      </div>
+      <div class="matrix-visual" style="margin-top: 0;">
+        <div class="matrix-row">
+          <div class="matrix-cell highlight">12</div>
+          <div class="matrix-cell">10</div>
+          <div class="matrix-cell highlight">15</div>
+          <div class="matrix-cell">8</div>
+        </div>
+        <div class="matrix-row">
+          <div class="matrix-cell">14</div>
+          <div class="matrix-cell highlight">9</div>
+          <div class="matrix-cell">12</div>
+          <div class="matrix-cell highlight">11</div>
+        </div>
+        <div class="matrix-row">
+          <div class="matrix-cell highlight">7</div>
+          <div class="matrix-cell">16</div>
+          <div class="matrix-cell highlight">13</div>
+          <div class="matrix-cell">6</div>
+        </div>
+        <div class="matrix-row">
+          <div class="matrix-cell">18</div>
+          <div class="matrix-cell highlight">5</div>
+          <div class="matrix-cell">20</div>
+          <div class="matrix-cell highlight">3</div>
+        </div>
+        <div class="matrix-row">
+          <div class="matrix-cell highlight">11</div>
+          <div class="matrix-cell">14</div>
+          <div class="matrix-cell">16</div>
+          <div class="matrix-cell highlight">9</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="matrix-caption reveal">
+    <span><span class="dot"></span> Număr impar de melodii (cerința 4)</span>
+    <span style="color: var(--muted);">Hover pe celule pentru interactivitate</span>
+  </div>
+</section>
+
+<!-- COD C++ -->
+<section id="cod" class="code-section">
+  <div class="section-label">Soluție</div>
+  <h2 class="section-title reveal">Codul <em>sursă</em> C++</h2>
+
+  <div class="tab-nav reveal">
+    <button class="tab-btn active" onclick="switchTab('main')">main.cpp</button>
+    <button class="tab-btn" onclick="switchTab('in')">muzica.in</button>
+    <button class="tab-btn" onclick="switchTab('out')">muzica.out</button>
+  </div>
+
+  <div class="tab-content active" id="tab-main">
+    <div class="code-header">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <div class="filename">main.cpp</div>
+    </div>
+    <div class="code-block code-block-connected"><pre><span class="cmt">// MusicMatrix — Proiect Matrici | Muzica
+// Cerinte: C1 numărare, C2 maxim linii, C3 medii, C4 paritate</span>
+
+<span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;fstream&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;iomanip&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="kw">const int</span> NMAX = <span class="num">50</span>;
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+    <span class="tp">ifstream</span> fin(<span class="str">"muzica.in"</span>);
+    <span class="tp">ofstream</span> fout(<span class="str">"muzica.out"</span>);
+
+    <span class="tp">int</span> n, m, k;
+    fin >> n >> m >> k;
+
+    <span class="tp">int</span> a[NMAX][NMAX];
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="num">0</span>; i &lt; n; i++)
+        <span class="kw">for</span> (<span class="tp">int</span> j = <span class="num">0</span>; j &lt; m; j++)
+            fin >> a[i][j];
+
+    <span class="cmt">// ——— C1: Albume cu mai mult de k melodii ———</span>
+    <span class="tp">int</span> contor = <span class="num">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="num">0</span>; i &lt; n; i++)
+        <span class="kw">for</span> (<span class="tp">int</span> j = <span class="num">0</span>; j &lt; m; j++)
+            <span class="kw">if</span> (a[i][j] > k) contor++;
+
+    fout &lt;&lt; <span class="str">"C1: Albume cu mai mult de "</span> &lt;&lt; k &lt;&lt; <span class="str">" melodii: "</span>
+         &lt;&lt; contor &lt;&lt; <span class="str">"\n\n"</span>;
+
+    <span class="cmt">// ——— C2: Trupa cu cel mai mare total de melodii ———</span>
+    <span class="tp">int</span> maxSum = <span class="num">-1</span>, idxMax = <span class="num">0</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+        <span class="tp">int</span> suma = <span class="num">0</span>;
+        <span class="kw">for</span> (<span class="tp">int</span> j = <span class="num">0</span>; j &lt; m; j++)
+            suma += a[i][j];
+        <span class="kw">if</span> (suma > maxSum) {
+            maxSum = suma;
+            idxMax = i + <span class="num">1</span>;
+        }
+    }
+    fout &lt;&lt; <span class="str">"C2: Trupa cu cele mai multe melodii: Trupa "</span>
+         &lt;&lt; idxMax &lt;&lt; <span class="str">" (total: "</span> &lt;&lt; maxSum &lt;&lt; <span class="str">")\n\n"</span>;
+
+    <span class="cmt">// ——— C3: Media melodiilor pentru fiecare trupă ———</span>
+    fout &lt;&lt; <span class="str">"C3: Medii aritmetice pe trupe:\n"</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+        <span class="tp">double</span> suma = <span class="num">0</span>;
+        <span class="kw">for</span> (<span class="tp">int</span> j = <span class="num">0</span>; j &lt; m; j++)
+            suma += a[i][j];
+        fout &lt;&lt; <span class="str">"  Trupa "</span> &lt;&lt; i+<span class="num">1</span> &lt;&lt; <span class="str">": "</span>
+             &lt;&lt; fixed &lt;&lt; setprecision(<span class="num">2</span>) &lt;&lt; suma / m &lt;&lt; <span class="str">" melodii/album\n"</span>;
+    }
+    fout &lt;&lt; <span class="str">"\n"</span>;
+
+    <span class="cmt">// ——— C4: Albume cu număr impar de melodii ———</span>
+    fout &lt;&lt; <span class="str">"C4: Albume cu numar impar de melodii:\n"</span>;
+    <span class="tp">bool</span> gasit = <span class="kw">false</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> i = <span class="num">0</span>; i &lt; n; i++)
+        <span class="kw">for</span> (<span class="tp">int</span> j = <span class="num">0</span>; j &lt; m; j++)
+            <span class="kw">if</span> (a[i][j] % <span class="num">2</span> != <span class="num">0</span>) {
+                fout &lt;&lt; <span class="str">"  Trupa "</span> &lt;&lt; i+<span class="num">1</span> &lt;&lt; <span class="str">", Album "</span>
+                     &lt;&lt; j+<span class="num">1</span> &lt;&lt; <span class="str">": "</span> &lt;&lt; a[i][j] &lt;&lt; <span class="str">" melodii\n"</span>;
+                gasit = <span class="kw">true</span>;
+            }
+    <span class="kw">if</span> (!gasit)
+        fout &lt;&lt; <span class="str">"  Niciun album cu numar impar de melodii.\n"</span>;
+
+    fin.close();
+    fout.close();
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre></div>
+
+    <a class="share-btn" href="https://www.onlinegdb.com/online_c++_compiler" target="_blank">
+      ↗ Deschide în OnlineGDB
+    </a>
+  </div>
+
+  <div class="tab-content" id="tab-in">
+    <div class="io-grid">
+      <div class="io-card">
+        <h4>📄 muzica.in</h4>
+        <pre>5 4 10
+12 10 15 8
+14 9 12 11
+7 16 13 6
+18 5 20 3
+11 14 16 9</pre>
+        <p style="margin-top: 1rem; font-size: 0.78rem; color: var(--muted);">
+          Prima linie: n m k (trupe, albume, prag)<br>
+          Urmotoarele n linii: matricea propriu-zisă
+        </p>
+      </div>
+      <div class="io-card">
+        <h4>📋 Format explicat</h4>
+        <pre>n = 5   (trupe)
+m = 4   (albume / trupă)
+k = 10  (prag melodii)
+
+a[0] = {12, 10, 15, 8}   → Trupa 1
+a[1] = {14,  9, 12,11}   → Trupa 2
+a[2] = { 7, 16, 13, 6}   → Trupa 3
+a[3] = {18,  5, 20, 3}   → Trupa 4
+a[4] = {11, 14, 16, 9}   → Trupa 5</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-out">
+    <div class="io-card" style="max-width: 700px;">
+      <h4>📤 muzica.out (rezultat așteptat)</h4>
+      <pre>C1: Albume cu mai mult de 10 melodii: 12
+
+C2: Trupa cu cele mai multe melodii: Trupa 4 (total: 46)
+
+C3: Medii aritmetice pe trupe:
+  Trupa 1: 11.25 melodii/album
+  Trupa 2: 11.50 melodii/album
+  Trupa 3: 10.50 melodii/album
+  Trupa 4: 11.50 melodii/album
+  Trupa 5: 12.50 melodii/album
+
+C4: Albume cu numar impar de melodii:
+  Trupa 1, Album 1: 12 melodii ✗
+  Trupa 1, Album 3: 15 melodii ✓
+  Trupa 2, Album 2: 9 melodii ✓
+  Trupa 2, Album 4: 11 melodii ✓
+  Trupa 3, Album 1: 7 melodii ✓
+  Trupa 3, Album 3: 13 melodii ✓
+  Trupa 4, Album 2: 5 melodii ✓
+  Trupa 4, Album 4: 3 melodii ✓
+  Trupa 5, Album 1: 11 melodii ✓
+  Trupa 5, Album 4: 9 melodii ✓</pre>
+    </div>
+  </div>
+</section>
+
+<!-- DATE -->
+<section id="date">
+  <div class="section-label">Fișiere</div>
+  <h2 class="section-title reveal">Date de <em>intrare / ieșire</em></h2>
+  <div class="io-grid reveal">
+    <div class="io-card">
+      <h4>📥 Fișier de intrare: muzica.in</h4>
+      <pre>5 4 10
+12 10 15 8
+14 9 12 11
+7 16 13 6
+18 5 20 3
+11 14 16 9</pre>
+    </div>
+    <div class="io-card">
+      <h4>📤 Fișier de ieșire: muzica.out</h4>
+      <pre>C1: 12 albume > 10 melodii
+C2: Trupa 4 (total 46)
+C3: Medii calculate
+C4: 9 albume cu impar</pre>
+    </div>
+  </div>
+  <div class="cerinta-card reveal" style="max-width: 600px; margin-top: 1.5rem;" data-num="">
+    <h3 style="font-family: 'Playfair Display', serif; margin-bottom: 0.8rem;">Cazuri de excepție tratate</h3>
+    <ul style="font-size: 0.85rem; color: var(--muted); line-height: 2; list-style: none; display: flex; flex-direction: column; gap: 0.2rem;">
+      <li>✓ Matrice vidă (n=0 sau m=0)</li>
+      <li>✓ Nicio valoare mai mare decât k</li>
+      <li>✓ Niciun element impar</li>
+      <li>✓ Mai multe trupe cu același maxim</li>
+    </ul>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-left">
+    <div class="f-logo">MusicMatrix</div>
+    <p>Proiect informatică · Matrici bidimensionale · C++</p>
+    <p style="margin-top: 0.3rem;">Domeniu: Muzică &amp; Trupe · 4 cerințe implementate</p>
+  </div>
+  <div style="text-align: right;">
+    <p style="font-size: 0.78rem; color: var(--muted);">Clasa a X-a</p>
+    <p style="font-size: 0.78rem; color: var(--muted);">Proiect realizat cu HTML · CSS · JS</p>
+  </div>
+</footer>
+
+<script>
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
